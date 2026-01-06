@@ -60,7 +60,7 @@ const handlerLogout = async () => {
       blurred={fixedNavbar}
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
-        <div className="capitalize">
+        <div className="capitalize" onClick={() => setOpenSidenav(dispatch, false)}>
           <Breadcrumbs
             className={`bg-transparent p-0 transition-all ${
               fixedNavbar ? "mt-1" : ""
@@ -82,7 +82,7 @@ const handlerLogout = async () => {
           </Breadcrumbs>
         </div>
         <div className="flex items-center">
-          <div className="mr-auto md:mr-4 md:w-56">
+          <div className="mr-auto md:mr-4 md:w-56" onClick={() => setOpenSidenav(dispatch, false)}>
             {/* <Input label="Search" /> */}
             <Typography variant="h6" color="blue-gray">
               {` ${profile?.name}` || "Usuario"}

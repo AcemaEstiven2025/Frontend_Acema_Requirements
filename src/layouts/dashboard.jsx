@@ -8,7 +8,7 @@ import {
   Footer,
 } from "@/widgets/layout";
 import routes from "@/routes";
-import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+import { useMaterialTailwindController, setOpenConfigurator, setOpenSidenav } from "@/context";
 import Welcome from "@/pages/dashboard/Welcome";
 
 export function Dashboard() {
@@ -46,14 +46,16 @@ export function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-blue-gray-50/50">
+    <div className="min-h-screen bg-blue-gray-50/50" >
       <Sidenav
         routes={routes}
         brandImg={
           sidenavType === "dark" ? "/img/logo-ct.png" : "/img/logo-ct-dark.png"
         }
       />
-      <div className="p-4 xl:ml-80">
+      <div
+        className="p-4 xl:ml-80"
+      >
         <DashboardNavbar />
         <Configurator />
         <IconButton
@@ -71,7 +73,14 @@ export function Dashboard() {
           <Route index element={<Welcome />} />
 
           {getDashboardRoutes(routes).map(({ path, element }) => (
-            <Route key={path} path={path} element={element} />
+            <Route key={path} path={path} element={
+              <div
+                className="size-full"
+                onClick={() => setOpenSidenav(dispatch, false)}
+              >
+                {element}
+              </div>
+            } />
           ))}
         </Routes>
 

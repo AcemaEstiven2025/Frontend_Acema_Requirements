@@ -1,8 +1,10 @@
 import axios from "axios";
 import React, { useRef, useEffect, useState } from "react";
 import HomeScroll from "./RequirementsScroll";
+import {
+  ArrowDownTrayIcon
+} from "@heroicons/react/24/solid";
 import { useNavigate } from "react-router-dom";
-import { routes } from "@/routes";
 import {
   Typography,
   Card,
@@ -22,9 +24,10 @@ import {
 import { useMaterialTailwindController, setRequirements } from "@/context";
 import Swal from "sweetalert2";
 import { object } from "prop-types";
+import { apiClient } from "@/utils/apiClient";
+
 export function Requirements() {
-  const [controller, dispatch, { doCreateRequirement, doChangeStatus }] =
-    useMaterialTailwindController();
+  const [controller, dispatch, { doCreateRequirement, doChangeStatus }] = useMaterialTailwindController();
   const { profile, requirements } = controller;
   const navigate = useNavigate();
   const firstButtonRef = useRef(null);
@@ -52,7 +55,7 @@ export function Requirements() {
     ID_Status: "1",
   };
   const [form, setForm] = useState(initialForm);
-  
+
   // ---- manejo del modal -----
   const [openModal, setOpenModal] = useState(true); // For selection modal
   const [showForm, setShowForm] = useState(false); // To display the form
@@ -543,12 +546,37 @@ export function Requirements() {
     setShowForm(true);
   };
 
+  const handleDownloadExcel = async () => {
+    try {
+      const response = await apiClient({
+        url: '/templates/requirements',
+        method: 'GET',
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response]));
+
+      const enlace = document.createElement('a');
+      enlace.href = url;
+
+      enlace.setAttribute('download', 'archivo-descargado.xlsx');
+
+      document.body.appendChild(enlace);
+      enlace.click();
+
+      enlace.parentNode.removeChild(enlace);
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+    }
+  };
+
   //TODO COPIADO DE LINEAS DE EXCEL
   const handlePasteFromExcel = (e) => {
     e.preventDefault();
 
     const pastedText = e.clipboardData.getData("text");
-
     const rows = pastedText
       .split("\n")
       .map((r) => r.trim())
@@ -558,23 +586,44 @@ export function Requirements() {
 
     setForm((prev) => {
       const newForm = { ...prev };
-
+      const itemsCount = newForm.Supply.length - 1
+      if (
+        itemsCount >= 0 &&
+        !newForm.Supply[itemsCount] &&
+        !newForm.Annex[itemsCount] &&
+        !newForm.Quantity[itemsCount] &&
+        !newForm.ID_Suppliers[itemsCount] &&
+        !newForm.ID_Unit[itemsCount] &&
+        !newForm.ID_Expenses[itemsCount]
+      ) {
+        newForm.Supply.splice(itemsCount, 1);
+        newForm.Annex.splice(itemsCount, 1);
+        newForm.Quantity.splice(itemsCount, 1);
+        newForm.ID_Suppliers.splice(itemsCount, 1);
+        newForm.ID_Unit.splice(itemsCount, 1);
+        newForm.ID_Expenses.splice(itemsCount, 1);
+      }
       rows.forEach((row) => {
         const cols = row.split("\t");
 
         // Ajusta el orden según tu Excel
         const [
           supply = "",
+          annex = "",
           unit = "",
-          quantity = "",
           expense = "",
+          quantity = "",
           supplier = "",
         ] = cols;
 
+        const unitFound = filteredUnits.find(u => u.Description.toLowerCase() == unit.toLowerCase());
+        const expenseFound = filteredTypesEspenses.find(t => t.Description.toLowerCase() == expense.toLowerCase());
+
         newForm.Supply.push(supply);
-        newForm.ID_Unit.push(unit);
+        newForm.Annex.push(annex);
+        if (unitFound) newForm.ID_Unit.push(unitFound.ID.toString());
+        if (expenseFound) newForm.ID_Expenses.push(expenseFound.ID.toString());
         newForm.Quantity.push(quantity);
-        newForm.ID_Expenses.push(expense);
         newForm.ID_Suppliers.push(supplier);
       });
 
@@ -582,7 +631,7 @@ export function Requirements() {
     });
 
     // mover a la última página
-    setPage(Math.ceil((form.Supply.length + rows.length) / itemsPerPage));
+    setPage(Math.ceil(form.Supply.length / itemsPerPage));
   };
   /* -------------------- PROGRESS -------------------- */
   const requiredFields = [
@@ -617,6 +666,10 @@ export function Requirements() {
   const completedFields = requiredFields.filter(
     (f) => form[f] && form[f] !== "",
   ).length;
+
+  const icon = {
+    className: "w-5 h-5 text-inherit",
+  };
 
   const progress = Math.round((completedFields / requiredFields.length) * 100);
   return (
@@ -666,11 +719,11 @@ export function Requirements() {
               <Typography variant="small" className="text-blue-gray-600">
                 Complete la información para generar un nuevo requerimiento.
               </Typography>
-             
+
             </CardHeader>
 
             {/* PROGRESS BAR */}
-            <CardBody  className="pt-4">
+            <CardBody className="pt-4">
               <div className="mb-1 flex items-center justify-between">
                 <Typography variant="small" color="blue-gray">
                   Progreso
@@ -1070,41 +1123,47 @@ export function Requirements() {
               />
             </CardBody>
 
-            {/** TODO INPUT PARA SUBIR ARCHIVOS DE EXCEL PENDIENTE */}
-            <Input
-              label="Pegar desde Excel (Ctrl + V)"
-              placeholder="Pega aquí las filas copiadas desde Excel"
-              onPaste={handlePasteFromExcel}
-            />
-            <HomeScroll
-              form={form}
-              errors={errors}
-              annexType={annexType}
-              paginatedSupply={paginatedSupply}
-              page={page}
-              itemsPerPage={itemsPerPage}
-              totalItems={totalItems}
-              totalPages={totalPages}
-              itemsPerPageOptions={itemsPerPageOptions}
-              unitsInfo={unitsInfo}
-              filteredUnits={filteredUnits}
-              searchUnits={searchUnits}
-              setSearchUnits={setSearchUnits}
-              setSearchTypeEspenses={setSearchTypeEspenses}
-              typeEspensesInfo={typeEspensesInfo}
-              filteredTypesEspenses={filteredTypesEspenses}
-              searchTypeEspenses={searchTypeEspenses}
-              handleArrayChange={handleArrayChange}
-              setAnnexType={setAnnexType}
-              addRow={addRow}
-              removeRow={removeRow}
-              setPage={setPage}
-              setItemsPerPage={setItemsPerPage}
-            />
-            <div className="p-6 pt-0">
-              <Button color="blue" fullWidth onClick={handleSubmit}>
-                Guardar Requerimiento
-              </Button>
+            <div className="px-6">
+              {/** INPUT PARA PEGAR VARIAS CELDAS DESDE EXCEL */}
+              <div className="flex gap-2 items-center">
+                <Input
+                  label="Pegar desde Excel (Ctrl + V)"
+                  placeholder="Pega aquí las filas copiadas desde Excel"
+                  className="placeholder:opacity-0 focus:placeholder:opacity-100"
+                  onPaste={handlePasteFromExcel}
+                />
+                <Button variant="filled" color="blue" onClick={handleDownloadExcel}> <ArrowDownTrayIcon {...icon} /> </Button>
+              </div>
+              <HomeScroll
+                form={form}
+                errors={errors}
+                annexType={annexType}
+                paginatedSupply={paginatedSupply}
+                page={page}
+                itemsPerPage={itemsPerPage}
+                totalItems={totalItems}
+                totalPages={totalPages}
+                itemsPerPageOptions={itemsPerPageOptions}
+                unitsInfo={unitsInfo}
+                filteredUnits={filteredUnits}
+                searchUnits={searchUnits}
+                setSearchUnits={setSearchUnits}
+                setSearchTypeEspenses={setSearchTypeEspenses}
+                typeEspensesInfo={typeEspensesInfo}
+                filteredTypesEspenses={filteredTypesEspenses}
+                searchTypeEspenses={searchTypeEspenses}
+                handleArrayChange={handleArrayChange}
+                setAnnexType={setAnnexType}
+                addRow={addRow}
+                removeRow={removeRow}
+                setPage={setPage}
+                setItemsPerPage={setItemsPerPage}
+              />
+              <div className="p-6 pt-0">
+                <Button color="blue" fullWidth onClick={handleSubmit}>
+                  Guardar Requerimiento
+                </Button>
+              </div>
             </div>
           </Card>
         )}
