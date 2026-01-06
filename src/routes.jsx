@@ -35,21 +35,21 @@ export const routes = [
             icon: <FolderPlusIcon  {...icon} />,
             name: "Proyectos",
             path: "/Projects",
-            permission: ["ADMINSUPER", "GERENTE GENERAL","DIRECTOR PROYECTO"],
+            permission: ["ADMINSUPER","GERENTE PROYECTO", "GERENTE GENERAL","DIRECTOR PROYECTO"],
             element: <NewProject />,
           },
            {
             icon: <DocumentPlusIcon  {...icon} />,
             name: "Codigo Proyecto",
             path: "/Project_Code",
-            permission: ["ADMINSUPER", "GERENTE GENERAL","DIRECTOR PROYECTO"],
+            permission: ["ADMINSUPER","GERENTE PROYECTO", "GERENTE GENERAL","DIRECTOR PROYECTO"],
             element: <NewProjectCode />,
           },
            {
             icon: <DocumentPlusIcon  {...icon} />,
             name: "Responsable",
             path: "/Responsables",
-            permission: ["ADMINSUPER","DIRECTOR PROYECTO", "GERENTE GENERAL","DIRECTOR COMPRAS","TÉCNICO RESPONSABLE"],
+            permission: ["ADMINSUPER","DIRECTOR PROYECTO","GERENTE PROYECTO", "GERENTE GENERAL","DIRECTOR COMPRAS","TÉCNICO RESPONSABLE"],
             element: <AssingResponible />,
           }
         ]
