@@ -41,7 +41,7 @@ export function Requirements() {
     ID_Unit: [""],
     Quantity: [""],
     ID_Expenses: [""],
-    ID_Suppliers: [""],
+    Suggested_Suppliers: [""],
 
     Annex: [""],
     Technical_Resp: "",
@@ -269,7 +269,7 @@ export function Requirements() {
       ID_Unit: [...prev.ID_Unit, ""],
       Quantity: [...prev.Quantity, ""],
       ID_Expenses: [...prev.ID_Expenses, ""],
-      ID_Suppliers: [...prev.ID_Suppliers, ""],
+      Suggested_Suppliers: [...prev.Suggested_Suppliers, ""],
       Annex: [...(prev.Annex || []), ""], // Aseguramos que exista Annex
     }));
 
@@ -293,7 +293,7 @@ export function Requirements() {
       const newID_Expenses = prev.ID_Expenses.filter(
         (_, i) => i !== absoluteIndex,
       );
-      const newID_Suppliers = prev.ID_Suppliers.filter(
+      const newSuggested_Suppliers = prev.Suggested_Suppliers.filter(
         (_, i) => i !== absoluteIndex,
       );
       const newAnnex = Array.isArray(prev.Annex)
@@ -324,7 +324,7 @@ export function Requirements() {
         ID_Unit: newID_Unit,
         Quantity: newQuantity,
         ID_Expenses: newID_Expenses,
-        ID_Suppliers: newID_Suppliers,
+        Suggested_Suppliers: newSuggested_Suppliers,
         Annex: newAnnex,
       };
     });
@@ -351,7 +351,7 @@ export function Requirements() {
     const ID_Unit = normalizeArray(form.ID_Unit);
     const Quantity = normalizeArray(form.Quantity);
     const ID_Expenses = normalizeArray(form.ID_Expenses);
-    const ID_Suppliers = normalizeArray(form.ID_Suppliers);
+    const Suggested_Suppliers = normalizeArray(form.Suggested_Suppliers);
 
     Supply.forEach((v, i) => {
       formData.append(`Supply[${i}]`, v ?? "");
@@ -369,8 +369,8 @@ export function Requirements() {
       formData.append(`ID_Expenses[${i}]`, v ?? "");
     });
 
-    ID_Suppliers.forEach((v, i) => {
-      formData.append(`ID_Suppliers[${i}]`, v ?? "");
+    Suggested_Suppliers.forEach((v, i) => {
+      formData.append(`Suggested_Suppliers[${i}]`, v ?? "");
     });
 
     // 🔹 Annex (archivo o texto)
@@ -394,7 +394,7 @@ export function Requirements() {
   const handleSubmit = async () => {
     try {
       if (!validateForm()) return;
-
+      console.log(form)
       const swalWithTailwind = Swal.mixin({
         customClass: {
           popup: "rounded-xl p-4",
@@ -466,7 +466,7 @@ export function Requirements() {
   // --- Validación del formulario ---
   const validateForm = () => {
     const newErrors = {};
-    const excludedFields = ["Annex", "ID_Suppliers"];
+    const excludedFields = ["Annex", "Suggested_Suppliers"];
 
     Object.entries(form).forEach(([key, value]) => {
       if (excludedFields.includes(key)) return;
@@ -502,7 +502,7 @@ export function Requirements() {
 
     // 🔹 arrays que pueden tener valores vacíos
     const arraysToClean = [
-      "ID_Suppliers",
+      "Suggested_Suppliers",
       "ID_Expenses",
       "ID_Unit",
       "Quantity",
@@ -575,7 +575,7 @@ export function Requirements() {
         newForm.ID_Unit.push(unit);
         newForm.Quantity.push(quantity);
         newForm.ID_Expenses.push(expense);
-        newForm.ID_Suppliers.push(supplier);
+        newForm.Suggested_Suppliers.push(supplier);
       });
 
       return newForm;
@@ -603,7 +603,7 @@ export function Requirements() {
     ID_Unit: [""],
     Quantity: [""],
     ID_Expenses: [""],
-    ID_Suppliers: [""],
+    Suggested_Suppliers: [""],
 
     Annex: [""],
     Technical_Resp: "",
