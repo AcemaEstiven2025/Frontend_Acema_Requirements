@@ -41,7 +41,7 @@ const RequirementsScroll = ({
   setItemsPerPage,
 }) => {
   return (
-    <CardBody className="p-0">
+    Suggested_Suppliers: [""],
       {/* CONTENEDOR SCROLL */}
       <div className="mt-10 max-h-[480px] overflow-y-auto px-2">
         {/* FILTRO CANTIDAD POR PÁGINA */}
