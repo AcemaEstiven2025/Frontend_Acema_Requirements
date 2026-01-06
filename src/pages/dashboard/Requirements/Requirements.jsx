@@ -556,15 +556,15 @@ export function Requirements() {
 
       const url = window.URL.createObjectURL(new Blob([response]));
 
-      const enlace = document.createElement('a');
-      enlace.href = url;
+      const link = document.createElement('a');
+      link.href = url;
 
-      enlace.setAttribute('download', 'archivo-descargado.xlsx');
+      link.setAttribute('download', 'Plantilla requerimientos.xlsx');
 
-      document.body.appendChild(enlace);
-      enlace.click();
+      document.body.appendChild(link);
+      link.click();
 
-      enlace.parentNode.removeChild(enlace);
+      link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
 
     } catch (error) {
