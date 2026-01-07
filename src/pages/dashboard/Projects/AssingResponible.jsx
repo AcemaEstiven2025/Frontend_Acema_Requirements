@@ -358,7 +358,7 @@ console.log(response)
                   </div>
                   {filteredCodes.length > 0 ? (
                     filteredCodes.map((c, idx) => (
-                      <Option key={idx} value={c.Code_Purchasing}>
+                      <Option key={idx} value={c.ID}>
                         {c.Code_Purchasing}
                       </Option>
                     ))
