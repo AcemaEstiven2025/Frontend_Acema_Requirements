@@ -432,6 +432,7 @@ export function Requirements() {
               Change_Date: new Date().toISOString(),
               remarks: "PROCESO INICIADO",
             };
+            debugger
             const statushistory = await doChangeStatus(obj);
             if (statushistory.status == 200) {
               const formData = await buildFormData(form);

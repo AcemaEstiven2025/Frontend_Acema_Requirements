@@ -150,7 +150,7 @@ export function AssignManager() {
         <div className="mt-12 flex justify-center">
             <Card className="w-full max-w-5xl shadow-lg">
                 <CardHeader floated={false} shadow={false} className="p-6">
-                    <Typography variant="h4">Asignar Gestor de Facturación</Typography>
+                    <Typography variant="h4">Asignar Gestor de Cotización</Typography>
                     <div className="mb-1 flex justify-between text-xs">
                         <span>Progreso</span>
                         <span>{progress}%</span>

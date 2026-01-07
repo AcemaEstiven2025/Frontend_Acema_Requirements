@@ -15,7 +15,7 @@ import {
 import {
   Requirements, Profile, ListRequirements,
   Notifications, NewProject, NewProjectCode, AssingResponible, AssignManager,
-  AssignQuoteResponsibles
+  AssignQuoteResponsibles, Quotes
 } from "@/pages/dashboard";//AssingResponible
 import { SignIn, SignUp } from "@/pages/auth";
 import { PERMISSIONS } from "@/config/Roles";
@@ -98,6 +98,13 @@ export const routes = [
             path: "/Responsables_Facturacion/:requirementId",
             element: <AssignQuoteResponsibles />,
           },
+          {
+            icon: <TableCellsIcon  {...icon} />,
+            name: "Listado de requerimiento",
+            path: "/Cotizacion/:requirementId",
+            permission: ["ADMINSUPER", "DIRECTOR COMPRAS", "TÉCNICO RESPONSABLE"],
+            element: <Quotes />,
+          }
         ]
       },
       {
