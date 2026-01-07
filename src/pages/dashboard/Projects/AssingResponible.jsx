@@ -46,7 +46,6 @@ export function AssingResponible() {
         const res2 = await axios.get("/form/info", {
           withCredentials: true,
         });
-
         setInfocomplete(res.data.data || []);
 
         const projectList = (res.data.data || [])
@@ -145,121 +144,117 @@ export function AssingResponible() {
 
   const progress = Math.round((completedFields / totalFields) * 100);
 
- 
-// -------------------- VALIDACIÓN --------------------
-const validateAssignment = () => {
-  let hasError = false;
+  // -------------------- VALIDACIÓN --------------------
+  const validateAssignment = () => {
+    let hasError = false;
 
-  const newErrors = { project: "", codes: [], users: [] };
+    const newErrors = { project: "", codes: [], users: [] };
 
-  // Validar proyecto
-  if (!selectedProject) {
-    newErrors.project = "Debes seleccionar un proyecto";
-    hasError = true;
-  }
-
-  // Validar códigos
-  const codeIds = assignedCodes.map((c) => c.ID_CodeProjPurch);
-  assignedCodes.forEach((c, i) => {
-    if (!c.ID_CodeProjPurch) {
-      newErrors.codes[i] = "Selecciona un código";
+    // Validar proyecto
+    if (!selectedProject) {
+      newErrors.project = "Debes seleccionar un proyecto";
       hasError = true;
-    } else if (codeIds.indexOf(c.ID_CodeProjPurch) !== i) {
-      newErrors.codes[i] = "Código duplicado";
-      hasError = true;
-    } else {
-      newErrors.codes[i] = "";
     }
-  });
 
-  // Validar usuarios
-  const userIds = assignedUsers.map((u) => u.ID_User);
-  assignedUsers.forEach((u, i) => {
-    if (!u.ID_User) {
-      newErrors.users[i] = "Selecciona un usuario";
-      hasError = true;
-    } else if (userIds.indexOf(u.ID_User) !== i) {
-      newErrors.users[i] = "Usuario duplicado";
-      hasError = true;
-    } else {
-      newErrors.users[i] = "";
-    }
-  });
+    // Validar códigos
+    const codeIds = assignedCodes.map((c) => c.ID_CodeProjPurch);
+    assignedCodes.forEach((c, i) => {
+      if (!c.ID_CodeProjPurch) {
+        newErrors.codes[i] = "Selecciona un código";
+        hasError = true;
+      } else if (codeIds.indexOf(c.ID_CodeProjPurch) !== i) {
+        newErrors.codes[i] = "Código duplicado";
+        hasError = true;
+      } else {
+        newErrors.codes[i] = "";
+      }
+    });
 
-  return { hasError, newErrors };
-};
+    // Validar usuarios
+    const userIds = assignedUsers.map((u) => u.ID_User);
+    assignedUsers.forEach((u, i) => {
+      if (!u.ID_User) {
+        newErrors.users[i] = "Selecciona un usuario";
+        hasError = true;
+      } else if (userIds.indexOf(u.ID_User) !== i) {
+        newErrors.users[i] = "Usuario duplicado";
+        hasError = true;
+      } else {
+        newErrors.users[i] = "";
+      }
+    });
 
-// -------------------- HANDLE SUBMIT --------------------
-const handleSubmit = async () => {
-  const { hasError, newErrors } = validateAssignment(); // <--- no parámetros, usa estados locales
-  setErrors(newErrors);
+    return { hasError, newErrors };
+  };
 
-  if (hasError) return;
+  // -------------------- HANDLE SUBMIT --------------------
+  const handleSubmit = async () => {
+    const { hasError, newErrors } = validateAssignment(); // <--- no parámetros, usa estados locales
+    setErrors(newErrors);
 
-  // SweetAlert2 Confirm
-  const swalWithTailwind = Swal.mixin({
-    customClass: {
-      popup: "rounded-xl p-4",
-      title: "text-lg font-semibold text-gray-800",
-      htmlContainer: "text-sm text-gray-600",
-      confirmButton:
-        "ml-10 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400",
-      cancelButton:
-        "mr-10 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400",
-    },
-    buttonsStyling: false,
-  });
+    if (hasError) return;
 
-  const result = await swalWithTailwind.fire({
-    title: "¿Estás seguro?",
-    text: "Se asignarán los códigos y usuarios seleccionados",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "SI, asignar!",
-    cancelButtonText: "No, cancelar!",
-    reverseButtons: true,
-  });
+    // SweetAlert2 Confirm
+    const swalWithTailwind = Swal.mixin({
+      customClass: {
+        popup: "rounded-xl p-4",
+        title: "text-lg font-semibold text-gray-800",
+        htmlContainer: "text-sm text-gray-600",
+        confirmButton:
+          "ml-10 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400",
+        cancelButton:
+          "mr-10 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400",
+      },
+      buttonsStyling: false,
+    });
 
-  if (result.isConfirmed) {
-    const payload = {
-      ID_User: assignedUsers.map((u) => u.ID_User).filter(Boolean),
-      ID_CodeProjPurch: assignedCodes
-        .map((c) => c.ID_CodeProjPurch)
-        .filter(Boolean),
-    };
+    const result = await swalWithTailwind.fire({
+      title: "¿Estás seguro?",
+      text: "Se asignarán los códigos y usuarios seleccionados",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "SI, asignar!",
+      cancelButtonText: "No, cancelar!",
+      reverseButtons: true,
+    });
 
+    if (result.isConfirmed) {
+      const payload = {
+        ID_User: assignedUsers.map((u) => u.ID_User).filter(Boolean),
+        ID_CodeProjPurch: assignedCodes
+          .map((c) => c.ID_CodeProjPurch)
+          .filter(Boolean),
+      };
 
-    try {
-      const response = await axios.post("/form/requirementauth", payload, {
-        withCredentials: true,
-      });
-console.log(response)
-      if (response.status === 200) {
+      try {
+        const response = await axios.post("/form/requirementauth", payload, {
+          withCredentials: true,
+        });
+        console.log(response);
+        if (response.status === 200 || response.status === 201 ) {
+          swalWithTailwind.fire({
+            title: "Asignación exitosa",
+            text: "Usuarios asignados correctamente 👌",
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+          // Resetear
+          setAssignedCodes([{ ID_CodeProjPurch: "" }]);
+          setAssignedUsers([{ ID_User: "" }]);
+          setSelectedProject("");
+          setCodePurchasing([]);
+          setErrors({ project: "", codes: [], users: [] });
+        }
+      } catch (err) {
         swalWithTailwind.fire({
-          title: "Asignación exitosa",
-          text: "Usuarios asignados correctamente 👌",
-          icon: "success",
+          title: "Error",
+          text: "Ocurrió un error en el envío",
+          icon: "error",
           confirmButtonText: "OK",
         });
-        // Resetear
-        setAssignedCodes([{ ID_CodeProjPurch: "" }]);
-        setAssignedUsers([{ ID_User: "" }]);
-        setSelectedProject("");
-        setCodePurchasing([]);
-        setErrors({ project: "", codes: [], users: [] });
       }
-    } catch (err) {
-      swalWithTailwind.fire({
-        title: "Error",
-        text: "Ocurrió un error en el envío",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
     }
-  }
-};
-
-
+  };
 
   /* -------------------- UI -------------------- */
   return (
@@ -317,9 +312,8 @@ console.log(response)
           </Typography>
           {assignedCodes.map((row, i) => {
             const selectedCode = codePurchasing.find(
-              (c) => c.Code_Purchasing === row.ID_CodeProjPurch,
+              (c) => c.Id.toString() === row.ID_CodeProjPurch?.toString(),
             );
-
             return (
               <div
                 key={i}
@@ -327,7 +321,9 @@ console.log(response)
               >
                 <Select
                   label={errors.codes[i] || "Código de Compra"}
-                  value={row.ID_CodeProjPurch}
+                  value={
+                    row.ID_CodeProjPurch ? row.ID_CodeProjPurch.toString() : ""
+                  }
                   onChange={(val) =>
                     handleChange(
                       assignedCodes,
@@ -356,9 +352,10 @@ console.log(response)
                       className="!text-sm"
                     />
                   </div>
+
                   {filteredCodes.length > 0 ? (
-                    filteredCodes.map((c, idx) => (
-                      <Option key={idx} value={c.Code_Purchasing}>
+                    filteredCodes.map((c) => (
+                      <Option key={c.Id} value={c.Id.toString()}>
                         {c.Code_Purchasing}
                       </Option>
                     ))
@@ -367,14 +364,14 @@ console.log(response)
                   )}
                 </Select>
 
+                {/*  Nombre del Pedido */}
                 <Input
-                  value={selectedCode?.Name_Order || ""}
-                  ReadOnly
                   label="Nombre del Pedido"
-                  className="w-full bg-gray-300 text-gray-800 cursor-not-allowed"
+                  value={selectedCode?.Name_Order || ""}
+                  readOnly
+                  className="w-full cursor-not-allowed bg-gray-300 text-gray-800"
                   style={{ backgroundColor: "#D1D5DB" }}
                 />
-
                 <div className="mt-2 flex gap-2 md:mt-0">
                   <Button
                     size="sm"

@@ -52,7 +52,7 @@ export function NewProjectCode() {
       // setProjectInfo(projects);
       setTechManagerInfo(res.data.userTechManager || []);
       setPurchasingDirectorInfo(res.data.userpurchasingDirector || []);
-      setProjectInfo(res2.data.date || []);
+      setProjectInfo(res2.data.data || []);
     };
     loadInfo();
   }, [form.ID_Project]);

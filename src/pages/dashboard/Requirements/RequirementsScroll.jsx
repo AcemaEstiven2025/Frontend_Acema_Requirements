@@ -232,8 +232,8 @@ const RequirementsScroll = ({
                 <Input
                   label="Proveedor"
                   className="w-full"
-                  value={form.ID_Suppliers[realIndex] || ""}
-                  onChange={(e) => handleArrayChange(realIndex, "ID_Suppliers", e.target.value)}
+                  value={form.Suggested_Suppliers[realIndex] || ""}
+                  onChange={(e) => handleArrayChange(realIndex, "Suggested_Suppliers", e.target.value)}
                 />
 
                 {/* BOTONES */}
