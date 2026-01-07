@@ -389,7 +389,7 @@ export function NewProjectCode() {
                   if (currentNumProject && !value.startsWith(currentNumProject)) {
                     value = currentNumProject;
                   }
-                  return handlePairChange(i, "code", value)
+                  return handlePairChange(i, "code", value.toUpperCase())
                 }}
               />
 

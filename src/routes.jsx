@@ -12,8 +12,11 @@ import {
   FolderPlusIcon,
   FolderIcon
 } from "@heroicons/react/24/solid";
-import { Requirements, Profile, ListRequirements,
-   Notifications, NewProject,NewProjectCode ,AssingResponible} from "@/pages/dashboard";//AssingResponible
+import {
+  Requirements, Profile, ListRequirements,
+  Notifications, NewProject, NewProjectCode, AssingResponible, AssignManager,
+  AssignQuoteResponsibles
+} from "@/pages/dashboard";//AssingResponible
 import { SignIn, SignUp } from "@/pages/auth";
 import { PERMISSIONS } from "@/config/Roles";
 const icon = {
@@ -24,32 +27,32 @@ export const routes = [
   {
     layout: "dashboard",
     pages: [
-        {
+      {
         icon: <FolderIcon  {...icon} />,
         name: "Proyectos",
         path: "/Proyectos",
-        permission: [PERMISSIONS.ENCARGADO,"ADMINSUPER"],
-        element:<Requirements />,
-        subPages:[
+        permission: [PERMISSIONS.ENCARGADO, "ADMINSUPER"],
+        element: <Requirements />,
+        subPages: [
           {
             icon: <FolderPlusIcon  {...icon} />,
             name: "Proyectos",
             path: "/Projects",
-            permission: ["ADMINSUPER","GERENTE PROYECTO", "GERENTE GENERAL","DIRECTOR PROYECTO"],
+            permission: ["ADMINSUPER", "GERENTE PROYECTO", "GERENTE GENERAL", "DIRECTOR PROYECTO"],
             element: <NewProject />,
           },
-           {
+          {
             icon: <DocumentPlusIcon  {...icon} />,
             name: "Codigo Proyecto",
             path: "/Project_Code",
-            permission: ["ADMINSUPER","GERENTE PROYECTO", "GERENTE GENERAL","DIRECTOR PROYECTO"],
+            permission: ["ADMINSUPER", "GERENTE PROYECTO", "GERENTE GENERAL", "DIRECTOR PROYECTO"],
             element: <NewProjectCode />,
           },
-           {
+          {
             icon: <DocumentPlusIcon  {...icon} />,
             name: "Responsable",
             path: "/Responsables",
-            permission: ["ADMINSUPER","DIRECTOR PROYECTO","GERENTE PROYECTO", "GERENTE GENERAL","DIRECTOR COMPRAS","TÉCNICO RESPONSABLE"],
+            permission: ["ADMINSUPER", "DIRECTOR PROYECTO", "GERENTE PROYECTO", "GERENTE GENERAL", "DIRECTOR COMPRAS", "TÉCNICO RESPONSABLE"],
             element: <AssingResponible />,
           }
         ]
@@ -58,20 +61,43 @@ export const routes = [
         icon: <ArchiveBoxIcon  {...icon} />,
         name: "Requerimientos",
         path: "/Requerimiento",
-        element:<Requirements />,
-        subPages:[
+        element: <Requirements />,
+        subPages: [
           {
             icon: <DocumentPlusIcon  {...icon} />,
             name: "Requerimiento",
             path: "/Requerimiento",
+            permission: ["ADMINSUPER", "DIRECTOR COMPRAS", "TÉCNICO RESPONSABLE"],
             element: <Requirements />,
           },
-           {
+          {
             icon: <TableCellsIcon  {...icon} />,
             name: "Listado de requerimiento",
             path: "/Lista_Requerimientos",
+            permission: ["ADMINSUPER", "DIRECTOR COMPRAS", "TÉCNICO RESPONSABLE"],
             element: <ListRequirements />,
           }
+        ]
+      },
+      {
+        icon: <FolderIcon  {...icon} />,
+        name: "Facturación",
+        path: "/Facturacion",
+        hide: true,
+        element: <Requirements />,
+        subPages: [
+          {
+            icon: <FolderPlusIcon {...icon} />,
+            name: "Asignar Gestor de Facturación",
+            path: "/Gestor_Facturacion/:requirementId",
+            element: <AssignManager />,
+          },
+          {
+            icon: <FolderPlusIcon {...icon} />,
+            name: "Asignar Responsables Facturación",
+            path: "/Responsables_Facturacion/:requirementId",
+            element: <AssignQuoteResponsibles />,
+          },
         ]
       },
       {
