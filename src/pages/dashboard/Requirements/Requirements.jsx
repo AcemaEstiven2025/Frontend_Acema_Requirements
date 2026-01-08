@@ -346,7 +346,7 @@ export function Requirements() {
     formData.append("ID_Formatos", form.ID_Formatos);
     formData.append("Date_Requirement", form.Date_Requirement);
     formData.append("ID_Status", form.ID_Status);
-    formData.append("ID_CodePurchasing", form.ID_CodePurchasing);
+    formData.append(`ID_CodePurchasing[0]`, form.ID_CodePurchasing);
 
     // 🔹 arrays NORMALIZADOS
     const Supply = normalizeArray(form.Supply);
@@ -432,7 +432,6 @@ export function Requirements() {
               Change_Date: new Date().toISOString(),
               remarks: "PROCESO INICIADO",
             };
-            debugger
             const statushistory = await doChangeStatus(obj);
             if (statushistory.status == 200) {
               const formData = await buildFormData(form);

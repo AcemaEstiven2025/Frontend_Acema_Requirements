@@ -8,6 +8,9 @@ import {
   Chip,
   Tooltip,
   CardFooter,
+  Select,
+  Input,
+  Option
 } from "@material-tailwind/react";
 import {
   BuildingStorefrontIcon,
@@ -25,7 +28,9 @@ export function ListRequirements() {
   const ITEMS_PER_PAGE = 5;
   const [controller, dispatch, { doHistoryStatus }] = useMaterialTailwindController();
   const { historyStatus, loading, requirements } = controller;
-  const [requirementGroup, setRequirementGroup] = useState(1);
+  const [requirementGroup, setRequirementGroup] = useState(null);
+  const [requirementsData, setRequirementData] = useState([]);
+  const [searchRequirement, setSearchRequirement] = useState("");
   const [generalInfo, setGeneralInfo] = useState({});
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -91,11 +96,27 @@ export function ListRequirements() {
   useEffect(() => {
     if (!requirementGroup) {
       setData([]);
-
     };
 
     fetchData();
   }, [requirementGroup]);
+
+  useEffect(() => {
+    const loadRequirementsAll = async () => {
+      const response = await apiClient("/form/info");
+      if (!response?.requirements) return;
+      const requirements = response?.requirements?.map(requirement => {
+        const projectFound = response?.projects?.find(project => project.ID == requirement.ID_Project);
+        const codePurchasing = projectFound?.CodesProjectsPurchasing?.find(code => code.ID == requirement.ID_CodePurchasing);
+        return {
+          value: requirement.Requirement_Group,
+          label: `${projectFound?.Name_Project} - ${codePurchasing?.Code_Purchasing} - Req No.${requirement.Requirement_Group}`,
+        }
+      });
+      setRequirementData(requirements);
+    };
+    loadRequirementsAll();
+  }, []);
 
   const swalWithTailwind = Swal.mixin({
     customClass: {
@@ -184,7 +205,7 @@ export function ListRequirements() {
         .then(async (result) => {
           if (result.isConfirmed) {
             const formData = buildFormData(item);
-            const { message, ok } = await apiClient.put("/form/requirements/edit", formData);
+            const { message, ok } = await apiClient.put(`/form/updaterequirement/${id}}`, formData);
             if (ok && message == "Requerimiento editado correctamente") {
               swalWithTailwind.fire({
                 title: "EDITADO",
@@ -216,7 +237,6 @@ export function ListRequirements() {
 
   const handleDelete = (id) => {
     try {
-      const item = data.find(item => item.ID == id);
       swalWithTailwind
         .fire({
           title: "Estas seguro de Eliminar este requerimiento",
@@ -229,10 +249,54 @@ export function ListRequirements() {
         })
         .then(async (result) => {
           if (result.isConfirmed) {
-            const formData = buildFormData(item);
-            const { message, ok } = await apiClient.delete("/form/requirements/delete", formData);
+            const { message, ok } = await apiClient.delete(`/form/deleterequirement/${id}`);
             if (ok && message == "Requerimiento eliminado correctamente") {
               setData((prev) => prev.filter((item) => item.ID !== id));
+              swalWithTailwind.fire({
+                title: "Eliminado",
+                text: "Requerimiento eliminado exitosamente. 👌",
+                icon: "success",
+                confirmButtonText: "OK",
+              });
+            } else {
+              swalWithTailwind.fire({
+                title: "NO SE PUDO ELIMINAR",
+                text: `No se pudo eliminar el requerimiento. ${message}`,
+                icon: "info",
+                confirmButtonText: "OK",
+              });
+            }
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithTailwind.fire({
+              title: "CANCELADO",
+              text: "ELIMINACIÓN CANCELADA 😢",
+              icon: "error",
+              confirmButtonText: "OK",
+            });
+          }
+        });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteAll = () => {
+    try {
+      swalWithTailwind
+        .fire({
+          title: "Estas seguro de Eliminar el Requerimiento completo",
+          text: `Se eliminaran todos los items`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "SI, Eliminar!",
+          cancelButtonText: "No, cancelar!",
+          reverseButtons: true,
+        })
+        .then(async (result) => {
+          if (result.isConfirmed) {
+            const { message, ok } = await apiClient.delete(`/form/deleterequirement/group/${requirementGroup}`);
+            if (ok && message == "Requerimiento eliminado correctamente") {
+              setRequirementGroup(null)
               swalWithTailwind.fire({
                 title: "Eliminado",
                 text: "Requerimiento de compra eliminado exitosamente. 👌",
@@ -300,16 +364,43 @@ export function ListRequirements() {
       </CardHeader>
       <CardBody className="mt-12 mb-8 flex flex-col gap-12 lg:px-12 pt-0">
         {/* INPUT PARA CAMBIAR REQUIREMENT_GROUP */}
-        <div className="flex items-center gap-4">
-          <Typography className="font-semibold">Requirement Group:</Typography>
-          <input
-            type="number"
+        <div className="">
+          <Select
+            label="Número de Requerimiento"
             value={requirementGroup}
-            onChange={(e) => setRequirementGroup(e.target.value)}
-            className="border border-gray-300 rounded-lg px-2 py-1"
-          />
+            onChange={(val) => setRequirementGroup(val)}
+            selected={() =>
+              requirementsData.find((r) => r.value.toString() === requirementGroup)?.label
+            }
+            menuProps={{
+              className: "p-2 max-h-48 overflow-auto",
+              style: { zIndex: 9999 },
+            }}
+            className={`w-full border-gray-300 focus:ring-blue-400`}
+          >
+            <div className="sticky top-0 z-20 border-b border-gray-200 bg-white px-2 pb-2">
+              <Input
+                label="Buscar..."
+                value={searchRequirement}
+                onChange={(e) => setSearchRequirement(e.target.value)}
+                className="!text-sm"
+              />
+            </div>
+            {requirementsData.length > 0 ? (
+              requirementsData.map((r) => (
+                <Option key={r.value} value={r.value.toString()}>
+                  {r.label}
+                </Option>
+              ))
+            ) : (
+              <Option disabled>No hay resultados</Option>
+            )}
+          </Select>
         </div>
-        {!requirementGroup ? <><div>hola esta vacio</div></> : (
+        <div>
+          <Button color={requirementGroup ? "red" : "gray"} variant="outlined" disabled={!requirementGroup} onClick={() => handleDeleteAll()}>Eliminar requerimiento completo</Button>
+        </div>
+        {(
           <>
             {/* PANEL SUPERIOR - Información general */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

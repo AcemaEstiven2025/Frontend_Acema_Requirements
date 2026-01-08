@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
     Card,
     CardHeader,
@@ -23,6 +22,7 @@ export function AssignManager() {
 
     const { requirementId } = useParams();
     const [users, setUsers] = useState([]);
+    const [generalInfo, setGeneralInfo] = useState({});
     const [requirementData, setRequirementData] = useState({
         project: '',
         code: "",
@@ -44,6 +44,11 @@ export function AssignManager() {
     const progress = Math.round((completedFields / totalRequired) * 100);
 
     useEffect(() => {
+        const loadGeneralInfo = async () => {
+            const response = await apiClient("/form/info");
+            setGeneralInfo(response);
+        };
+        loadGeneralInfo();
         const loadRequirementData = async () => {
             try {
                 const { data, ok } = await apiClient.get("/form/requirementinfo");
@@ -71,6 +76,19 @@ export function AssignManager() {
         loadRequirementData();
         loadUsersData();
     }, []);
+
+    useEffect(() => {
+        if(!generalInfo?.requirements) return;
+        const requirement = generalInfo?.requirements?.find(req => req.Requirement_Group.toString() === requirementId);
+        if(!requirement) return;
+        const projectFound = generalInfo?.projects?.find(project => project.ID == requirement.ID_Project);
+        const codePurchasing = projectFound?.CodesProjectsPurchasing?.find(code => code.ID == requirement.ID_CodePurchasing);
+        setRequirementData({
+            project: projectFound?.Name_Project,
+            code: codePurchasing?.Code_Purchasing,
+            name: codePurchasing?.Name_Order,
+        })
+    }, [generalInfo]);
 
     const handleChange = (value, name) => {
         setForm((prev) => ({

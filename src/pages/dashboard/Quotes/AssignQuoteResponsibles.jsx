@@ -18,6 +18,7 @@ import { apiClient } from "@/utils/apiClient";
 export function AssignQuoteResponsibles() {
     const { requirementId } = useParams();
     const [users, setUsers] = useState([]);
+    const [generalInfo, setGeneralInfo] = useState({});
     const [requirementData, setRequirementData] = useState({
         project: '',
         code: "",
@@ -36,6 +37,11 @@ export function AssignQuoteResponsibles() {
     const progress = Math.round((completedFields / totalFields) * 100);
 
     useEffect(() => {
+        const loadGeneralInfo = async () => {
+            const response = await apiClient("/form/info");
+            setGeneralInfo(response);
+        };
+        loadGeneralInfo();
         const loadRequirementData = async () => {
             try {
                 const { data, ok } = await apiClient.get("/form/requirementinfo");
@@ -63,6 +69,19 @@ export function AssignQuoteResponsibles() {
         loadRequirementData();
         loadUsersData();
     }, []);
+
+    useEffect(() => {
+        if(!generalInfo?.requirements) return;
+        const requirement = generalInfo?.requirements?.find(req => req.Requirement_Group.toString() === requirementId);
+        if(!requirement) return;
+        const projectFound = generalInfo?.projects?.find(project => project.ID == requirement.ID_Project);
+        const codePurchasing = projectFound?.CodesProjectsPurchasing?.find(code => code.ID == requirement.ID_CodePurchasing);
+        setRequirementData({
+            project: projectFound?.Name_Project,
+            code: codePurchasing?.Code_Purchasing,
+            name: codePurchasing?.Name_Order,
+        })
+    }, [generalInfo]);
 
     const handleChange = (list, setList, index, field, value) => {
         const newList = [...list];
@@ -160,7 +179,7 @@ export function AssignQuoteResponsibles() {
                 ID_User: assignedUsers.map((u) => u.ID_User).filter(Boolean),
             };
             try {
-                const { ok, message} = await apiClient.post("/form/responsiblesquote", payload);
+                const { ok, message } = await apiClient.post("/form/responsiblesquote", payload);
                 if (ok) {
                     swalWithTailwind.fire({
                         title: "Asignación exitosa",
