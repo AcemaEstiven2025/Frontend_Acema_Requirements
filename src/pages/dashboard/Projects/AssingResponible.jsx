@@ -13,8 +13,11 @@ import {
 } from "@material-tailwind/react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useMaterialTailwindController } from "@/context";
 
 export function AssingResponible() {
+   const [controller, dispatch, {  doChangeStatus }] = useMaterialTailwindController();
+    const { profile, requirements } = controller;
   /* -------------------- STATES -------------------- */
   const [projects, setProjects] = useState([]);
   const [codePurchasing, setCodePurchasing] = useState([]);
@@ -227,6 +230,16 @@ export function AssingResponible() {
       };
 
       try {
+
+         const obj = {
+              ID_Project: selectedProject,
+              ID_Status: "3",
+              Change_Date: new Date().toISOString(),
+              remarks: "ASIGNACION DE CODIGO DE COMPRA"
+            };
+            await doChangeStatus(obj);
+
+        
         const response = await axios.post("/form/requirementauth", payload, {
           withCredentials: true,
         });
