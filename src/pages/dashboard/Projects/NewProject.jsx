@@ -129,21 +129,25 @@ export function NewProject() {
       .then(async (result) => {
         if (result.isConfirmed) {
           try {
+           
             const res = await axios.post("/form/createproject", form, {
               withCredentials: true,
             });
+           // {Is_Global: false, ID: 13, Name_Project: 'rr85', Num_Project: '385', Location: 'cal', …}
+          
+           
+        
             if (res.data.message == "Proyecto creado con exito") {
-
-              const obj = {
-              ID_Project: form.ID_Project,
+              const { ID } = res.data.project;
+               const obj = {
+              ID_Project: ID,
               ID_Status: "1",
               Change_Date: new Date().toISOString(),
-              remarks: "CREACION DE CODIGO DE COMPRA",
-              Engineering_Manager: form.Engineering_Manager,
-              Purchasing_Director: form.Purchasing_Director
+              remarks: "CREACION DE PROYECTO"
             };
-            await doChangeStatus(obj);
-              
+           
+            //  await doChangeStatus(obj);
+            //   return
 
               swalWithTailwind.fire({
                 title: "Proyecto creado 🎉",
@@ -159,6 +163,7 @@ export function NewProject() {
               });
             }
           } catch {
+           console.log(errors)
             swalWithTailwind.fire({
               title: "Error",
               text: "No se pudo crear el proyecto",

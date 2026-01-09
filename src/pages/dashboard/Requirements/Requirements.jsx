@@ -427,10 +427,9 @@ export function Requirements() {
           if (result.isConfirmed) {
             const obj = {
               Requirement_Group: form.Requirement_Group,
-              ID_Status: "1",
-              Changed_By: profile.id.toString(),
+              ID_Status: "4",
               Change_Date: new Date().toISOString(),
-              remarks: "PROCESO INICIADO",
+              remarks: "PROCESO REQUERIMIENTO INICIADO",
             };
             const statushistory = await doChangeStatus(obj);
             if (statushistory.status == 200) {
