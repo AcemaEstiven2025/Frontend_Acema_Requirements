@@ -14,8 +14,10 @@ import {
 } from "@material-tailwind/react";
 import Swal from "sweetalert2";
 import { apiClient } from "@/utils/apiClient";
-
+import { useMaterialTailwindController } from "@/context";
 export function NewProjectCode() {
+    const [controller, dispatch, {  doChangeStatus }] = useMaterialTailwindController();
+    const { profile, requirements } = controller;
   /* -------------------- STATE -------------------- */
   const initialForm = {
     Code_Purchasing: [""],
@@ -260,6 +262,16 @@ export function NewProjectCode() {
               withCredentials: true,
             });
             if (resp.data.message == "Códigos Creados exitosamente") {
+
+             const obj = {
+              ID_Project: form.ID_Project,
+              ID_Status: "2",
+              Change_Date: new Date().toISOString(),
+              remarks: "CREACION DE CODIGO DE COMPRA",
+              Engineering_Manager: form.Engineering_Manager,
+              Purchasing_Director: form.Purchasing_Director
+            };
+            await doChangeStatus(obj);
               swalWithTailwind.fire({
                 title: "¡Creado!",
                 text: "Código creado correctamente 🎉",

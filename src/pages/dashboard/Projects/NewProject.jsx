@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 import { useMaterialTailwindController } from "@/context";
 
 export function NewProject() {
-  const [controller] = useMaterialTailwindController();
+  const [controller, {  doChangeStatus }] = useMaterialTailwindController();
   const { profile } = controller;
 
   /* -------------------- STATE -------------------- */
@@ -132,7 +132,21 @@ export function NewProject() {
             const res = await axios.post("/form/createproject", form, {
               withCredentials: true,
             });
+            console.log(res.data.project)
+            return
             if (res.data.message == "Proyecto creado con exito") {
+
+              const obj = {
+              ID_Project: form.ID_Project,
+              ID_Status: "1",
+              Change_Date: new Date().toISOString(),
+              remarks: "CREACION DE CODIGO DE COMPRA",
+              Engineering_Manager: form.Engineering_Manager,
+              Purchasing_Director: form.Purchasing_Director
+            };
+            await doChangeStatus(obj);
+              
+
               swalWithTailwind.fire({
                 title: "Proyecto creado 🎉",
                 text: res.data.message || "Creado correctamente",
