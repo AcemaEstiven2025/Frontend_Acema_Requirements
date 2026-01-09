@@ -319,7 +319,7 @@ export function NewProjectCode() {
     <div className="mt-12 flex justify-center">
       <Card className="w-full max-w-5xl shadow-lg">
         <CardHeader floated={false} shadow={false} className="p-6">
-          <Typography variant="h4">Create Project Code</Typography>
+          <Typography variant="h4">Crear Código de Proyecto</Typography>
           <div className="mb-1 flex justify-between text-xs">
             <span>Progreso</span>
             <span>{progress}%</span>
@@ -359,7 +359,7 @@ export function NewProjectCode() {
 
         {/* ---------- SECCIÓN DINÁMICA UNIDA ---------- */}
         <CardBody className="border-t space-y-8">
-          <Typography variant="h6">Purchase Codes</Typography>
+          <Typography variant="h6">Códigos de Compra existentes</Typography>
           <Select
             label="Códigos existentes"
             value={null} // No selecciona nada

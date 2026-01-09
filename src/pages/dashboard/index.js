@@ -8,3 +8,4 @@ export * from "@/pages/dashboard/Projects/AssingResponible";
 export * from "@/pages/dashboard/Quotes/AssignManager";
 export * from "@/pages/dashboard/Quotes/AssignQuoteResponsibles";
 export * from "@/pages/dashboard/Quotes/Quotes";
+export * from "@/pages/dashboard/Quotes/TechnicalInspection";

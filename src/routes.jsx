@@ -10,12 +10,13 @@ import {
   ArchiveBoxIcon,
   DocumentPlusIcon,
   FolderPlusIcon,
-  FolderIcon
+  FolderIcon,
+  NewspaperIcon
 } from "@heroicons/react/24/solid";
 import {
   Requirements, Profile, ListRequirements,
   Notifications, NewProject, NewProjectCode, AssingResponible, AssignManager,
-  AssignQuoteResponsibles, Quotes
+  AssignQuoteResponsibles, Quotes, TechnicalInspection
 } from "@/pages/dashboard";//AssingResponible
 import { SignIn, SignUp } from "@/pages/auth";
 import { PERMISSIONS } from "@/config/Roles";
@@ -67,7 +68,7 @@ export const routes = [
             icon: <DocumentPlusIcon  {...icon} />,
             name: "Requerimiento",
             path: "/Requerimiento",
-            permission: ["ADMINSUPER", "DIRECTOR COMPRAS", "TÉCNICO RESPONSABLE"],
+            permission: ["ADMINSUPER", "DIRECTOR COMPRAS", "TÉCNICO RESPONSABLE", "COLABORADOR"],
             element: <Requirements />,
           },
           {
@@ -80,30 +81,54 @@ export const routes = [
         ]
       },
       {
-        icon: <FolderIcon  {...icon} />,
-        name: "Facturación",
-        path: "/Facturacion",
-        hide: true,
+        icon: <NewspaperIcon  {...icon} />,
+        name: "Cotizaciones",
+        path: "/Cotizacion",
         element: <Requirements />,
         subPages: [
           {
             icon: <FolderPlusIcon {...icon} />,
             name: "Asignar Gestor de Facturación",
-            path: "/Gestor_Facturacion/:requirementId",
+            hide: true,
+            path: "/Gestor_Cotizacion/:requirementId",
             element: <AssignManager />,
           },
           {
             icon: <FolderPlusIcon {...icon} />,
             name: "Asignar Responsables Facturación",
-            path: "/Responsables_Facturacion/:requirementId",
+            hide: true,
+            path: "/Responsables_Cotizacion/:requirementId",
             element: <AssignQuoteResponsibles />,
           },
           {
             icon: <TableCellsIcon  {...icon} />,
-            name: "Listado de requerimiento",
+            name: "Cotización",
             path: "/Cotizacion/:requirementId",
+            hide: true,
             permission: ["ADMINSUPER", "DIRECTOR COMPRAS", "TÉCNICO RESPONSABLE"],
             element: <Quotes />,
+          },
+          {
+            icon: <DocumentPlusIcon  {...icon} />,
+            name: "Cotización",
+            path: "/Cotizacion",
+            permission: ["ADMINSUPER", "DIRECTOR COMPRAS", "TÉCNICO RESPONSABLE"],
+            element: <Quotes />,
+          },
+          {
+            icon: <DocumentPlusIcon  {...icon} />,
+            name: "Inspección Técnica",
+            path: "/Inspeccion_Tecnica/:requirementId",
+            hide: true,
+            permission: ["ADMINSUPER", "DIRECTOR COMPRAS", "TÉCNICO RESPONSABLE"],
+            element: <TechnicalInspection />,
+          },
+          {
+            icon: <DocumentPlusIcon  {...icon} />,
+            name: "Inspección Técnica",
+            path: "/Inspeccion_Tecnica",
+            permission: ["ADMINSUPER", "DIRECTOR COMPRAS", "TÉCNICO RESPONSABLE"],
+            element: <TechnicalInspection />,
           }
         ]
       },
