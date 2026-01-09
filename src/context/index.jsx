@@ -137,13 +137,13 @@ export function MaterialTailwindControllerProvider({ children }) {
   /** -----------------------------
    *  FUNCIÓN PARA REVISAR EL ESTADO DEL HISTORIAL
    *  ----------------------------- */
-  const doHistoryStatus = async (requirementGroup) => {
+  const doHistoryStatus = async (requirementGroup, status = 1) => {
     dispatch({ type: "LOADING", value: true });
 // const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     try {
     //  await sleep(1000);
       const response = await axios.get(
-        `/form/historystatus/${requirementGroup}/1`,
+        `/form/historystatus/${requirementGroup}/${status}`,
       { withCredentials: true } 
       );
      

@@ -194,7 +194,6 @@ export function Requirements() {
   const filteredTechLead = TechLeadInfo?.filter((tl) =>
     tl.Name?.toLowerCase().includes(searchTechLead.toLowerCase()),
   );
-
   // --- onchange para el formulario
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -238,7 +237,7 @@ export function Requirements() {
       const p = projectInfo.find((x) => x.ID.toString() == form.ID_Project);
       const c = p.Codes.find((x) => x.ID.toString() == e.target.value);
       if (c) {
-        setForm((prev) => ({ ...prev, Technical_Resp: p.Director.ID, Dir_Project: c.Engineering_Manager }));
+        setForm((prev) => ({ ...prev, Technical_Resp: c.Engineering_Manager?.toString(), Dir_Project: p.Director.ID?.toString() }));
       }
     }
   };
@@ -1004,7 +1003,7 @@ export function Requirements() {
                     : "Director de Proyecto"
                 }
                 name="Dir_Project"
-                disabled={requerimentExists}
+                disabled={true}
                 value={form.Dir_Project}
                 onChange={(value) =>
                   handleChange({ target: { name: "Dir_Project", value } })
@@ -1046,7 +1045,7 @@ export function Requirements() {
                     : "Responsable Técnico"
                 }
                 name="Technical_Resp"
-                disabled={requerimentExists}
+                disabled={true}
                 value={form.Technical_Resp}
                 onChange={(value) =>
                   handleChange({ target: { name: "Technical_Resp", value } })
