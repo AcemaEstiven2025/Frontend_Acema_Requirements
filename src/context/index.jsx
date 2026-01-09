@@ -85,7 +85,7 @@ export function MaterialTailwindControllerProvider({ children }) {
     try {
     
       const response = await axios.post(
-        `/form/historychangestatus/${data.Changed_By}`,
+        `/form/historychangestatus`,
         data,
         { withCredentials: true } 
       );
