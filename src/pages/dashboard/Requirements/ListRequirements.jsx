@@ -43,7 +43,7 @@ export function ListRequirements() {
   // Función para traer los datos
   const fetchData = async () => {
     try {
-      const res = await doHistoryStatus(requirementGroup)
+      const res = await doHistoryStatus(requirementGroup, 4)
       const responseData = res.data;
 
       if (responseData[0]) {
@@ -103,7 +103,7 @@ export function ListRequirements() {
 
   useEffect(() => {
     const loadRequirementsAll = async () => {
-      const response = await apiClient("/form/info");
+      const response = await apiClient.get("/form/info");
       if (!response?.requirements) return;
       const requirements = response?.requirements?.map(requirement => {
         const projectFound = response?.projects?.find(project => project.ID == requirement.ID_Project);
@@ -250,7 +250,7 @@ export function ListRequirements() {
         .then(async (result) => {
           if (result.isConfirmed) {
             const { message, ok } = await apiClient.delete(`/form/deleterequirement/${id}`);
-            if (ok && message == "Requerimiento eliminado correctamente") {
+            if (ok) {
               setData((prev) => prev.filter((item) => item.ID !== id));
               swalWithTailwind.fire({
                 title: "Eliminado",
@@ -295,7 +295,7 @@ export function ListRequirements() {
         .then(async (result) => {
           if (result.isConfirmed) {
             const { message, ok } = await apiClient.delete(`/form/deleterequirement/group/${requirementGroup}`);
-            if (ok && message == "Requerimiento eliminado correctamente") {
+            if (ok) {
               setRequirementGroup(null)
               swalWithTailwind.fire({
                 title: "Eliminado",
@@ -364,7 +364,7 @@ export function ListRequirements() {
       </CardHeader>
       <CardBody className="mt-12 mb-8 flex flex-col gap-12 lg:px-12 pt-0">
         {/* INPUT PARA CAMBIAR REQUIREMENT_GROUP */}
-        <div className="">
+        <div className="flex gap-4">
           <Select
             label="Número de Requerimiento"
             value={requirementGroup}
@@ -396,9 +396,11 @@ export function ListRequirements() {
               <Option disabled>No hay resultados</Option>
             )}
           </Select>
-        </div>
-        <div>
-          <Button color={requirementGroup ? "red" : "gray"} variant="outlined" disabled={!requirementGroup} onClick={() => handleDeleteAll()}>Eliminar requerimiento completo</Button>
+          <div className="flex gap-3">
+            <Button color={requirementGroup ? "blue" : "gray"} variant="filled" disabled={!requirementGroup} onClick={() => handleDeleteAll()}>Editar</Button>
+
+            <Button color={requirementGroup ? "red" : "gray"} variant="filled" disabled={!requirementGroup} onClick={() => handleDeleteAll()}>Eliminar</Button>
+          </div>
         </div>
         {(
           <>
@@ -588,15 +590,13 @@ export function ListRequirements() {
                           </td>
 
                           <td className="py-3 px-6 flex gap-2">
-                            <Tooltip content="Editar">
-                              <Button
-                                size="sm"
-                                color="blue"
-                                onClick={() => handleEdit(ID)}
-                              >
-                                <PencilIcon className="h-4 w-4" />
-                              </Button>
-                            </Tooltip>
+                            <Button
+                              size="sm"
+                              color="blue"
+                              onClick={() => handleEdit(ID)}
+                            >
+                              RESET
+                            </Button>
                             <Tooltip content="Eliminar">
                               <Button
                                 size="sm"
