@@ -47,10 +47,10 @@ export function ListRequirements() {
       const responseData = res.data;
 
       if (responseData[0]) {
-        setData(responseData[0].Requirements);
+        setData(responseData.map(r => r.Requirement));
 
         // Configurar info general según el primer requerimiento
-        const first = responseData[0].Requirements[0];
+        const first = responseData[0].Requirement;
         setGeneralInfo({
           "ID Project": {
             value: first.ID_Project,
