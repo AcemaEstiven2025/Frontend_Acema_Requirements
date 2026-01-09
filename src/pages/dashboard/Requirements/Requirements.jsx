@@ -397,7 +397,7 @@ export function Requirements() {
   const handleSubmit = async () => {
     try {
       if (!validateForm()) return;
-
+      console.log(form)
       const swalWithTailwind = Swal.mixin({
         customClass: {
           popup: "rounded-xl p-4",
