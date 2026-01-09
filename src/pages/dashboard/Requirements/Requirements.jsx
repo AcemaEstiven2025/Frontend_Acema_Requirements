@@ -129,7 +129,7 @@ export function Requirements() {
       setRequirementsInfo(response.data.requirements);
       setRequirements(dispatch, response.data.requirements); // SE GUARDAN LOS REQUERIMIENTOS EN ESTADO GLOBAL
 
-      setProjectInfo(response.data.projects);
+      // setProjectInfo(response.data.projects);
       setUntsInfo(response.data.units);
       settypeEspensesInfo(response.data.typeEspenses);
       setFormatsInfo(response.data.formats);
@@ -142,7 +142,14 @@ export function Requirements() {
       setTechManagerInfo(response.data.userTechManager);
       setTechLeadInfo(response.data.userTechLead);
     };
+    const projectsAuthenticate = async () => {
+      const { ok, data } = await apiClient.get("/form/inforequiauth");
+      if (ok) {
+        setProjectInfo(data.projects);
+      }
+    }
     Searchinfo();
+    projectsAuthenticate();
   }, [showForm]);
 
   //  --------- SEARCH FILTERS FOR DROPDOWNS
@@ -202,8 +209,8 @@ export function Requirements() {
       );
       let code = "";
       if (p) {
-        setCodePurchasingInfo(p.CodesProjectsPurchasing);
-        code = p.CodesProjectsPurchasing.find(
+        setCodePurchasingInfo(p.Codes);
+        code = p.Codes.find(
           (c) => c.ID.toString() == r.ID_CodePurchasing,
         );
       }
@@ -223,7 +230,15 @@ export function Requirements() {
     if (!requerimentExists && e.target.name == "ID_Project") {
       const p = projectInfo.find((x) => x.ID.toString() == e.target.value);
       if (p) {
-        setCodePurchasingInfo(p.CodesProjectsPurchasing);
+        setCodePurchasingInfo(p.Codes);
+      }
+      setForm((prev) => ({ ...prev, Technical_Resp: "", Dir_Project: "" }));
+    }
+    if (!requerimentExists && e.target.name == "ID_CodePurchasing") {
+      const p = projectInfo.find((x) => x.ID.toString() == form.ID_Project);
+      const c = p.Codes.find((x) => x.ID.toString() == e.target.value);
+      if (c) {
+        setForm((prev) => ({ ...prev, Technical_Resp: p.Director.ID, Dir_Project: c.Engineering_Manager }));
       }
     }
   };
