@@ -205,7 +205,7 @@ export function ListRequirements() {
         .then(async (result) => {
           if (result.isConfirmed) {
             const formData = buildFormData(item);
-            const { message, ok } = await apiClient.put(`/form/updaterequirement/${id}}`, formData);
+            const { message, ok } = await apiClient.put(`/form/updaterequirement/${id}`, formData);
             if (ok && message == "Requerimiento editado correctamente") {
               swalWithTailwind.fire({
                 title: "EDITADO",
