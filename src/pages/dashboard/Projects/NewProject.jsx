@@ -132,8 +132,6 @@ export function NewProject() {
             const res = await axios.post("/form/createproject", form, {
               withCredentials: true,
             });
-            console.log(res.data.project)
-            return
             if (res.data.message == "Proyecto creado con exito") {
 
               const obj = {
