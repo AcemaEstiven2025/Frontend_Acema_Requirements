@@ -258,7 +258,8 @@ export function TechnicalInspection() {
     const status = {
         pending: <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-[11px] font-medium rounded-md flex items-center justify-center">Pendiente</span>,
         approved: <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[11px] font-medium rounded-md flex items-center justify-center">Aceptado</span>,
-        rejected: <span className="px-2 py-0.5 bg-red-100 text-red-700 text-[11px] font-medium rounded-md flex items-center justify-center">Denegado</span>
+        rejected: <span className="px-2 py-0.5 bg-red-100 text-red-700 text-[11px] font-medium rounded-md flex items-center justify-center">Denegado</span>,
+        initiated: <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-[11px] font-medium rounded-md flex items-center justify-center">Iniciado</span>
     };
 
     const handleChangeRequirement = (req) => {
@@ -278,6 +279,26 @@ export function TechnicalInspection() {
                 newData.push({
                     ID_Requirement: idRequirement,
                     approved: false
+                })
+            }
+            return newData;
+        });
+        setRequirementSelected(null);
+    };
+
+    const handlePendingRequirement = (idRequirement) => {
+        setRelations(prev => {
+            const newData = [...prev];
+            const relationIndex = prev.findIndex(relation => relation.ID_Requirement == idRequirement);
+            if (relationIndex != "-1") {
+                newData[relationIndex] = {
+                    ID_Requirement: idRequirement,
+                    pending: true
+                }
+            } else {
+                newData.push({
+                    ID_Requirement: idRequirement,
+                    pending: true
                 })
             }
             return newData;
@@ -444,7 +465,7 @@ export function TechnicalInspection() {
                         <div className="flex flex-col gap-3 p-4">
                             {currentRowsRequirements.map((item) => {
                                 const assigned = relations.find(relation => relation.ID_Requirement === item.ID);
-                                const statusRequeriment = assigned ? assigned.approved ? "approved" : "rejected" : "pending";
+                                const statusRequeriment = assigned ? assigned.approved ? "approved" : assigned.pending ? "pending" : "rejected" : "initiated";
                                 return (
                                     <div className={`relative p-4 border ${requirementSelected === item.ID ? "border-blue-500" : "border-gray-300 shadow-sm"} rounded-xl hover:shadow-md transition-shadow duration-200 cursor-pointer`} key={item.ID} onClick={() => handleChangeRequirement(item.ID)}>
                                         <div className="flex flex-col gap-1">
@@ -536,7 +557,16 @@ export function TechnicalInspection() {
                                 </Select>
                             </div>
                         </div>
-                        <div>
+                        <div className="flex flex-row gap-3">
+                            <Button
+                                size="sm"
+                                variant="outlined"
+                                color={requirementSelected ? "orange" : "gray"}
+                                disabled={!requirementSelected}
+                                onClick={() => handlePendingRequirement(requirementSelected)}
+                            >
+                                Requerimiento Pendiente
+                            </Button>
                             <Button
                                 size="sm"
                                 variant="outlined"
